@@ -6,7 +6,7 @@ import toml
 ROOT_DIR = os.path.dirname(os.path.abspath('minecraft_pseudoserver.py'))
 def create(name):
     path = 'stand_in'
-    with open('servers.toml', 'r') as f:
+    with open('servers/servers.toml', 'r') as f:
         config = toml.load(f)
         if not config['servers'][f'servers.{name}']:
             with open('data.toml', 'w') as f:
@@ -18,22 +18,38 @@ def create(name):
 def update_remote(name):   
 
     commit_message = f'SYNC: {datetime.datetime.now()} | by {os.getlogin()}'    
-    with open('servers.toml', 'r') as f:
+    with open('servers/servers.toml', 'r') as f:
         config = toml.load(f)
-        name = config[name]['name']
-        date = datetime.datetime.now()
-        path = config[name]['path']
+    name = config[name]['name']
+    path = config[name]['path']
+    date = datetime.datetime.now()
     dst = os.path.join(ROOT_DIR,'backups',name)
     copy(path,dst)
     server = os.path.join(ROOT_DIR,'servers',os.path.basename(path))
     copy(path,server)
-    os.system('git add -u')
+
+    with open('servers/servers.toml', 'w') as f:
+        config[name]['last_update'] = f'{date.timestamp()}' 
+        toml.dump(config, f)
+
+
+
+    os.system(f'git add .\\servers\\{os.path.basename(path)}\ .\\backups\\*')
     os.system(f'git commit -m "{commit_message}"')
     os.system('git push')
 
 
 def update_local(name):
-    print(name)
+    with open('servers/servers.toml', 'r') as f:
+        config = toml.load(f)
+    name = config[name]['name'] 
+    path = config[name]['path']
+
+    os.system('git pull')
+    server = os.path.join(ROOT_DIR,'servers',os.path.basename(path))
+    print(server,"\n",path)
+    copy(server,path)
+    
 
 def copy(src_path,dst_path):
     if os.path.exists(dst_path):
