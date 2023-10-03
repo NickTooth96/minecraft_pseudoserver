@@ -17,8 +17,7 @@ def create(name):
 
 def update_remote(name):   
 
-    commit_message = f'SYNC: {datetime.datetime.now()} | by {os.getlogin()}'
-    
+    commit_message = f'SYNC: {datetime.datetime.now()} | by {os.getlogin()}'    
     with open('servers.toml', 'r') as f:
         config = toml.load(f)
         name = config[name]['name']
@@ -27,7 +26,7 @@ def update_remote(name):
     dst = os.path.join(ROOT_DIR,'backups',name)
     copy(path,dst)
     server = os.path.join(ROOT_DIR,'servers',)
-    print(path)
+    print(">>>",path)
     # copy(path,server)
     os.system('git add -u')
     os.system(f'git commit -m "{commit_message}"')
