@@ -16,22 +16,28 @@ def create(name):
                 config['servers'][f'servers.{name}']['last_update'] = datetime.datetime.timestamp()
 
 def update_remote(name):   
+
+    user = os.getlogin()
+    print(user)
+    commit_message = f'SYNC: {datetime.datetime.now()} | by {user}'
     
     with open('servers.toml', 'r') as f:
         config = toml.load(f)
         name = config[name]['name']
         date = datetime.datetime.now()
         path = config[name]['path']
-    copy(name,path)
+    dst = os.path.join(ROOT_DIR,'backups',name)
+    copy(path,dst)
+    server = os.path.join(ROOT_DIR,'servers')
+    copy(path,server)
     os.system('git add -u')
-    os.system('git status')
+    os.system(f'git commit -m "{commit_message}"')
 
 
 def update_local(name):
     print(name)
 
-def copy(name,src_path):
-    dst = os.path.join(ROOT_DIR,'backups',name)
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
-    shutil.copytree(src_path, dst)        
+def copy(src_path,dst_path):
+    if os.path.exists(dst_path):
+        shutil.rmtree(dst_path)
+    shutil.copytree(src_path, dst_path)        
