@@ -17,9 +17,7 @@ def create(name):
 
 def update_remote(name):   
 
-    user = os.getlogin()
-    print(user)
-    commit_message = f'SYNC: {datetime.datetime.now()} | by {user}'
+    commit_message = f'SYNC: {datetime.datetime.now()} | by {os.getlogin()}'
     
     with open('servers.toml', 'r') as f:
         config = toml.load(f)
@@ -32,6 +30,7 @@ def update_remote(name):
     copy(path,server)
     os.system('git add -u')
     os.system(f'git commit -m "{commit_message}"')
+    os.system('git push')
 
 
 def update_local(name):
