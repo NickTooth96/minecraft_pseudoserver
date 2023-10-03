@@ -29,7 +29,7 @@ def update_remote(name):
     copy(path,server)
     os.system('git add -u')
     os.system(f'git commit -m "{commit_message}"')
-    # os.system('git push')
+    os.system('git push')
 
 
 def update_local(name):
