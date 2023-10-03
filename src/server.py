@@ -25,10 +25,8 @@ def update_remote(name):
         path = config[name]['path']
     dst = os.path.join(ROOT_DIR,'backups',name)
     copy(path,dst)
-    server = os.path.join(ROOT_DIR,'servers',)
-    print(">>>",path)
-    print(os.path.basename(path))
-    # copy(path,server)
+    server = os.path.join(ROOT_DIR,'servers',os.path.basename(path))
+    copy(path,server)
     os.system('git add -u')
     os.system(f'git commit -m "{commit_message}"')
     # os.system('git push')
